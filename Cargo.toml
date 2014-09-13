@@ -1,0 +1,10 @@
+[package]
+
+name = "rust_git"
+version = "0.0.1"
+authors = ["Kai Sellgren <kaisellgren@gmail.com>"]
+
+[lib]
+
+name = "rust_git"
+path = "src/lib.rs"
