@@ -1,5 +1,6 @@
 use object_type::ObjectType;
 
+#[deriving(PartialEq, Show)]
 pub struct ObjectHeader {
     pub typ: ObjectType,
     pub length: uint

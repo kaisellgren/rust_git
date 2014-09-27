@@ -1,3 +1,4 @@
+#[deriving(PartialEq, Show)]
 pub struct ObjectId {
     pub hash: &'static str,
     bytes: Vec<u8>

@@ -4,6 +4,7 @@ use meta::Meta;
 use serialization::Serializable;
 use serialization;
 
+#[deriving(PartialEq, Show)]
 pub struct Commit {
     pub meta: Meta,
     pub author_name: &'static str,
