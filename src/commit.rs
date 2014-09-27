@@ -1,8 +1,13 @@
 use object_id::ObjectId;
 use object_header::ObjectHeader;
+use object_header;
+use object_type;
 use meta::Meta;
 use serialization::Serializable;
 use serialization;
+use reader::Reader;
+use error::GitError;
+use error::CorruptedCommit;
 
 #[deriving(PartialEq, Show)]
 pub struct Commit {
@@ -54,4 +59,64 @@ impl Serializable for Commit {
 
         buff
     }
+}
+
+pub fn decode(bytes: &[u8]) -> Result<Commit, GitError> {
+    let header = object_header::decode(bytes);
+
+    decode_body(bytes.slice_from(bytes.len() - header.length), &header)
+}
+
+pub fn decode_body(bytes: &[u8], header: &ObjectHeader) -> Result<Commit, GitError> {
+    let mut reader = Reader::from_data(bytes);
+
+    if reader.take_string(5) != "tree " {
+        return Err(CorruptedCommit("Expected 'tree '"))
+    }
+
+    let tree_id = reader.take_string_based_object_id();
+
+    reader.skip(1);
+
+    let mut parent_ids = Vec::new();
+
+    while reader.take_string_while(|&c| c != 32) == "parent" {
+        reader.skip(1);
+
+        parent_ids.push(reader.take_string_based_object_id());
+
+        reader.skip(1);
+    }
+
+    reader.back(6);
+
+    if reader.take_string(7) != "author " {
+        return Err(CorruptedCommit("Expected 'author '"))
+    }
+
+    let (author_name, author_email, author_date) = serialization::decode_user_info(&mut reader);
+
+    if reader.take_string(10) != "committer " {
+        return Err(CorruptedCommit("Expected 'committer '"))
+    }
+
+    let (committer_name, committer_email, commit_date) = serialization::decode_user_info(&mut reader);
+
+    let message = reader.get_rest_as_string();
+
+    Ok(Commit {
+        meta: Meta {
+            id: ObjectId::from_string("b744d5cddb5095249299d95ee531cbd990741140"),
+            header: *header,
+        },
+        author_name: author_name,
+        author_email: author_email,
+        author_date: author_date,
+        committer_name: committer_name,
+        committer_email: committer_email,
+        commit_date: commit_date,
+        message: message.into_string(),
+        tree_id: tree_id,
+        parent_ids: parent_ids
+    })
 }
