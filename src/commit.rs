@@ -7,13 +7,13 @@ use serialization;
 #[deriving(PartialEq, Show)]
 pub struct Commit {
     pub meta: Meta,
-    pub author_name: &'static str,
-    pub author_email: &'static str,
-    pub author_date: int,
-    pub committer_name: &'static str,
-    pub committer_email: &'static str,
-    pub commit_date: int,
-    pub message: &'static str,
+    pub author_name: String,
+    pub author_email: String,
+    pub author_date: uint,
+    pub committer_name: String,
+    pub committer_email: String,
+    pub commit_date: uint,
+    pub message: String,
     pub tree_id: ObjectId,
     pub parent_ids: Vec<ObjectId>,
 }
