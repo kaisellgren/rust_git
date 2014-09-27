@@ -7,3 +7,6 @@ mod object_header;
 mod object_type;
 mod unit_tests;
 mod serialization;
+mod reader;
+mod conversion;
+mod error;
