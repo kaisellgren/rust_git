@@ -1,4 +1,7 @@
 use commit::Commit;
+use std::str::UnicodeStrSlice;
+use std::from_str::FromStr;
+use reader::Reader;
 
 pub trait Serializable {
     fn encode(&self) -> Vec<u8>;
@@ -19,6 +22,26 @@ pub fn encode_commit_info(commit: &Commit) -> Vec<u8> {
              commit.committer_email,
              encode_date(commit.commit_date).as_slice()))
     .into_bytes()
+}
+
+pub fn decode_user_info(reader: &mut Reader) -> (String, String, uint) {
+    let name = reader.take_string_while(|&c| c != 60).trim();
+
+    reader.skip(1); // <
+
+    let email = reader.take_string_while(|&c| c != 62).trim();
+
+    reader.skip(2); // One ´>´ and one space.
+
+    let timestamp: uint = FromStr::from_str(reader.take_string_while(|&c| c != 32)).unwrap();
+
+    reader.skip(1); // One space.
+
+    let time_zone_offset = reader.take_string_while(|&c| c != 10);
+
+    reader.skip(1); // LF.
+
+    (name.into_string(), email.into_string(), timestamp)
 }
 
 pub fn encode_date(date: uint) -> String {
