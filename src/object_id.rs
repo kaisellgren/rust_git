@@ -1,14 +1,26 @@
+use conversion;
+
+pub static RAW_SIZE: uint = 20;
+pub static HEX_SIZE: uint = 40;
+
 #[deriving(PartialEq, Show)]
 pub struct ObjectId {
-    pub hash: &'static str,
+    pub hash: String,
     bytes: Vec<u8>
 }
 
 impl ObjectId {
-    pub fn new(hash: &'static str) -> ObjectId {
+    pub fn from_string(hash: &str) -> ObjectId {
         ObjectId {
-            hash: hash,
-            bytes: Vec::new()
+            hash: hash.to_string(),
+            bytes: conversion::hex_string_to_bytes(hash)
+        }
+    }
+
+    pub fn from_bytes(bytes: &[u8]) -> ObjectId {
+        ObjectId {
+            hash: conversion::bytes_to_hex_string(bytes),
+            bytes: bytes.into_vec()
         }
     }
 }
