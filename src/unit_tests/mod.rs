@@ -14,15 +14,6 @@ use std::io::fs;
 use std::num::FromStrRadix;
 use conversion;
 
-#[test]
-fn decode_commit() {
-    // Test.
-    /*let path = "C:/Projects/RustGit/.git/objects/37/eaf372e4a1a5638706b757f8a086b78a5b490b";
-    let compressed_contents = File::open(&Path::new(path)).read_to_end().unwrap();
-    let contents = inflate_bytes_zlib(compressed_contents.as_slice()).unwrap();
-    let s = str::from_utf8(contents.as_slice()).unwrap();*/
-    //let bytes = File::open(&Path::new(".gitignore")).read_to_string().unwrap();
-    let c = Commit {
 fn create_test_commit() -> Commit {
     Commit {
         meta: Meta {
@@ -46,14 +37,6 @@ fn create_test_commit() -> Commit {
 
 #[test]
 fn encode_commit() {
-    /*let path = "C:/Projects/RustGit/.git/objects/37/eaf372e4a1a5638706b757f8a086b78a5b490b";
-    let compressed_contents = File::open(&Path::new(path)).read_to_end().unwrap();
-    let contents = inflate_bytes_zlib(compressed_contents.as_slice()).unwrap();
-    let s = str::from_utf8(contents.as_slice()).unwrap();
-    println!("{}", s);*/
-
-    //let bytes = File::open(&Path::new(".gitignore")).read_to_string().unwrap();
-
     let expected = File::open(&Path::new("resources/tests/commit")).read_to_end().unwrap();
     let encoded = create_test_commit().encode();
 
