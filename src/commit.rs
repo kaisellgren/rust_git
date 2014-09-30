@@ -7,7 +7,7 @@ use serialization::Serializable;
 use serialization;
 use reader::Reader;
 use error::GitError;
-use error::CorruptedCommit;
+use error::CorruptCommit;
 
 #[deriving(PartialEq, Show)]
 pub struct Commit {
@@ -71,7 +71,7 @@ pub fn decode_body(bytes: &[u8], header: &ObjectHeader) -> Result<Commit, GitErr
     let mut reader = Reader::from_data(bytes);
 
     if reader.take_string(5) != "tree " {
-        return Err(CorruptedCommit("Expected 'tree '"))
+        return Err(CorruptCommit("Expected 'tree '"))
     }
 
     let tree_id = reader.take_string_based_object_id();
@@ -91,13 +91,13 @@ pub fn decode_body(bytes: &[u8], header: &ObjectHeader) -> Result<Commit, GitErr
     reader.back(6);
 
     if reader.take_string(7) != "author " {
-        return Err(CorruptedCommit("Expected 'author '"))
+        return Err(CorruptCommit("Expected 'author '"))
     }
 
     let (author_name, author_email, author_date) = serialization::decode_user_info(&mut reader);
 
     if reader.take_string(10) != "committer " {
-        return Err(CorruptedCommit("Expected 'committer '"))
+        return Err(CorruptCommit("Expected 'committer '"))
     }
 
     let (committer_name, committer_email, commit_date) = serialization::decode_user_info(&mut reader);
