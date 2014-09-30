@@ -102,6 +102,8 @@ pub fn decode_body(bytes: &[u8], header: &ObjectHeader) -> Result<Commit, GitErr
 
     let (committer_name, committer_email, commit_date) = serialization::decode_user_info(&mut reader);
 
+    reader.skip(1);
+
     let message = reader.get_rest_as_string();
 
     Ok(Commit {
