@@ -23,3 +23,5 @@ mod pack_file;
 mod pack_index;
 mod blob;
 mod object_database;
+mod commit_sort_strategy;
+mod commit_filter;
