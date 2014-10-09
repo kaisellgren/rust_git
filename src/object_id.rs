@@ -3,7 +3,7 @@ use conversion;
 pub static RAW_SIZE: uint = 20;
 pub static HEX_SIZE: uint = 40;
 
-#[deriving(PartialEq, Show)]
+#[deriving(PartialEq, Show, Clone)]
 pub struct ObjectId {
     pub hash: String,
     bytes: Vec<u8>

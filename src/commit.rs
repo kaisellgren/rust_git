@@ -9,7 +9,7 @@ use reader::Reader;
 use error::GitError;
 use error::CorruptCommit;
 
-#[deriving(PartialEq, Show)]
+#[deriving(PartialEq, Show, Clone)]
 pub struct Commit {
     pub meta: Meta,
     pub author_name: String,

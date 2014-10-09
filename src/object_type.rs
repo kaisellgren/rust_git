@@ -1,4 +1,4 @@
-#[deriving(PartialEq, Show)]
+#[deriving(PartialEq, Show, Clone)]
 pub enum ObjectType {
     Commit,
     Tree,
