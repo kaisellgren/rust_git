@@ -13,11 +13,12 @@ use error::GitError;
 use error::NotFound;
 use flate::inflate_bytes_zlib;
 use object_header::ObjectHeader;
+use repository::Repository;
 
-pub fn find_object_by_id(id: &ObjectId) -> Result<Box<EObject>, GitError> {
+pub fn find_object_by_id(repository: &Repository, id: &ObjectId) -> Result<Box<EObject>, GitError> {
     let part1 = id.hash.as_slice().slice_to(2);
     let part2 = id.hash.as_slice().slice_from(2);
-    let path = Path::new(format!("C:/Projects/RustGit/.git/objects/{}/{}", part1, part2));
+    let path = Path::new(format!("{}objects/{}/{}", repository.path, part1, part2));
 
     if path.exists() {
         let mut file = File::open(&path);

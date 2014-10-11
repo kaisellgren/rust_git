@@ -8,6 +8,14 @@ use serialization;
 use reader::Reader;
 use error::GitError;
 use error::CorruptCommit;
+use error::NotFound;
+use repository::Repository;
+use commit_filter::CommitFilter;
+use object_database;
+use eobject::ECommit;
+use commit_sort_strategy::MostRecent;
+use extensions;
+use std::collections::HashSet;
 
 #[deriving(PartialEq, Show, Clone)]
 pub struct Commit {
@@ -119,6 +127,50 @@ pub fn decode_body(bytes: &[u8], header: &ObjectHeader) -> Result<Commit, GitErr
         commit_date: commit_date,
         message: message.into_string(),
         tree_id: tree_id,
-        parent_ids: parent_ids
+        parent_ids: parent_ids,
     })
+}
+
+pub fn find(repository: &Repository, filter: CommitFilter) -> Vec<Commit> {
+    let mut buffer = Vec::new();
+
+    let since_ids = match filter {
+        CommitFilter { since: Some(since), .. } => since,
+        _ => Vec::new(),
+    };
+
+    fn find_commit(id: &ObjectId, repository: &Repository) -> Result<Commit, GitError> {
+        match object_database::find_object_by_id(repository, id) {
+            Ok(box ECommit(c)) => Ok(c),
+            Err(e) => Err(e),
+            _ => Err(NotFound),
+        }
+    };
+
+    match filter.sort {
+        MostRecent => {
+            let mut commits: Vec<Commit> = since_ids.iter().map(|id| find_commit(id, repository).unwrap()).collect();
+
+            loop {
+                if commits.len() == 0 || buffer.len() == filter.limit {
+                    break;
+                }
+
+                let most_recent: Commit = extensions::max_by(commits.as_slice(), |c| c.commit_date).unwrap();
+
+                buffer.push(most_recent.clone());
+
+                let index = commits.iter().position(|c| *c == most_recent).unwrap();
+                commits.remove(index);
+
+                for id in most_recent.parent_ids.move_iter() {
+                    let commit = find_commit(&id, repository).unwrap();
+                    commits.push(commit);
+                }
+            }
+
+            buffer
+        },
+        _ => buffer,
+    }
 }

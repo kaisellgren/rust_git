@@ -2,13 +2,16 @@ use std::io::File;
 use commit::Commit;
 use commit;
 use eobject::EObject;
+use eobject::ECommit;
 use object_type;
 use object_header::ObjectHeader;
 use object_id::ObjectId;
 use meta::Meta;
+use repository::Repository;
 use serialization::Serializable;
-
 use object_database;
+use commit_filter::CommitFilter;
+use commit_sort_strategy;
 
 fn create_test_commit() -> Commit {
     Commit {
@@ -27,7 +30,10 @@ fn create_test_commit() -> Commit {
         commit_date: 1388624646,
         message: "foo bar baz qux".into_string(),
         tree_id: ObjectId::from_string("b744d5cddb5095249299d95ee531cbd990741140"),
-        parent_ids: vec![ObjectId::from_string("b744d5cddb5095249299d95ee531cbd990741141"), ObjectId::from_string("b744d5cddb5095249299d95ee531cbd990741142")]
+        parent_ids: vec![
+            ObjectId::from_string("b744d5cddb5095249299d95ee531cbd990741141"),
+            ObjectId::from_string("b744d5cddb5095249299d95ee531cbd990741142")
+        ]
     }
 }
 
