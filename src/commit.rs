@@ -165,7 +165,9 @@ pub fn find(repository: &Repository, filter: CommitFilter) -> Vec<Commit> {
 
                 for id in most_recent.parent_ids.move_iter() {
                     let commit = find_commit(&id, repository).unwrap();
-                    commits.push(commit);
+                    if !commits.contains(&commit) {
+                        commits.push(commit);
+                    }
                 }
             }
 
