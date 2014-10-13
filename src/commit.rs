@@ -163,12 +163,16 @@ pub fn find(repository: &Repository, filter: CommitFilter) -> Vec<Commit> {
                 let index = commits.iter().position(|c| *c == most_recent).unwrap();
                 commits.remove(index);
 
-                for id in most_recent.parent_ids.move_iter() {
-                    let commit = find_commit(&id, repository).unwrap();
-                    if !commits.contains(&commit) {
-                        commits.push(commit);
-                    }
-                }
+                let add_parent_commits = || {
+                    let parent_commits: Vec<Commit> = most_recent.parent_ids.iter()
+                        .filter(|id| !commits.iter().any(|c| c.meta.id == **id))
+                        .map(|id| find_commit(id, repository).unwrap())
+                        .collect();
+
+                    commits.push_all(parent_commits.as_slice());
+                };
+
+                add_parent_commits();
             }
 
             buffer
