@@ -1,4 +1,13 @@
 use object_id::ObjectId;
+use object_database::find_object_by_id;
+use error::CorruptRepository;
+use error::GitError;
+use repository::Repository;
+use commit::Commit;
+use commit;
+use eobject::ECommit;
+use commit_sort_strategy::MostRecent;
+use commit_filter::CommitFilter;
 
 pub struct Branch {
     pub name: String,
@@ -13,4 +22,13 @@ impl Branch {
     pub fn is_tracking(&self) -> bool {
         self.tracked_branch.is_some()
     }
+}
+
+pub fn tip(repository: &Repository, branch: &Branch) -> Result<Commit, GitError> {
+    match find_object_by_id(repository, &branch.tip_id) {
+        Ok(box ECommit(c)) => Ok(c),
+        Err(e) => Err(e),
+        _ => Err(CorruptRepository("Could not find the commit the branch points to")),
+    }
+}
 }
