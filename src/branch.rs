@@ -31,4 +31,15 @@ pub fn tip(repository: &Repository, branch: &Branch) -> Result<Commit, GitError>
         _ => Err(CorruptRepository("Could not find the commit the branch points to")),
     }
 }
+
+pub fn commits(repository: &Repository, branch: &Branch) -> Vec<Commit> {
+    let filter = CommitFilter {
+        since: Some(vec![branch.tip_id.clone()]),
+        until: None,
+        limit: -1,
+        offset: 0,
+        sort: MostRecent,
+    };
+
+    commit::find(repository, filter)
 }
