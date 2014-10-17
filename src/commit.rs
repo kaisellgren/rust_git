@@ -38,9 +38,8 @@ impl Serializable for Commit {
 
         let body_buff = self.encode_body();
 
-        // Update header length if necessary.
         if header.length == 0 {
-            header = ObjectHeader { length: body_buff.len(), ..header };
+            header.length = body_buff.len();
         }
 
         let header_buff = header.encode();
@@ -131,7 +130,7 @@ pub fn decode_body(bytes: &[u8], header: &ObjectHeader) -> Result<Commit, GitErr
     })
 }
 
-pub fn find(repository: &Repository, filter: CommitFilter) -> Vec<Commit> {
+pub fn find(repository: &Repository, filter: CommitFilter) -> Result<Vec<Commit>, GitError> {
     let mut buffer = Vec::new();
 
     let since_ids = match filter {
@@ -163,20 +162,18 @@ pub fn find(repository: &Repository, filter: CommitFilter) -> Vec<Commit> {
                 let index = commits.iter().position(|c| *c == most_recent).unwrap();
                 commits.remove(index);
 
-                let add_parent_commits = || {
-                    let parent_commits: Vec<Commit> = most_recent.parent_ids.iter()
-                        .filter(|id| !commits.iter().any(|c| c.meta.id == **id))
-                        .map(|id| find_commit(id, repository).unwrap())
-                        .collect();
+                let parent_commits: Result<Vec<Commit>, GitError> = most_recent.parent_ids.iter()
+                    .filter(|id| !commits.iter().any(|c| c.meta.id == **id))
+                    .map(|id| find_commit(id, repository))
+                    .collect();
 
-                    commits.push_all(parent_commits.as_slice());
-                };
+                let parents = try!(parent_commits);
 
-                add_parent_commits();
+                commits.push_all(parents.as_slice());
             }
 
-            buffer
+            Ok(buffer)
         },
-        _ => buffer,
+        _ => Ok(buffer),
     }
 }

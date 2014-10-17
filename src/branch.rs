@@ -32,7 +32,7 @@ pub fn tip(repository: &Repository, branch: &Branch) -> Result<Commit, GitError>
     }
 }
 
-pub fn commits(repository: &Repository, branch: &Branch) -> Vec<Commit> {
+pub fn commits(repository: &Repository, branch: &Branch) -> Result<Vec<Commit>, GitError> {
     let filter = CommitFilter {
         since: Some(vec![branch.tip_id.clone()]),
         until: None,

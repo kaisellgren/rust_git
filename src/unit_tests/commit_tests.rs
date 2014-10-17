@@ -52,20 +52,3 @@ fn decode_commit() {
 
     assert_eq!(create_test_commit(), decoded);
 }
-
-#[test]
-fn foo() {
-    /*let repo = Repository {
-        path: "./"
-    };*/
-
-    let id = ObjectId::from_string("0b9401c1e9595279b7da5335739e6648a3320203");
-    let res = *object_database::find_object_by_id(&id).unwrap();
-    match res {
-        ECommit(c) => println!("{}", c.meta.id),
-        _ => println!("dang"),
-    }
-    //println!("{}", res.meta.id);
-
-    fail!("STOP");
-}
