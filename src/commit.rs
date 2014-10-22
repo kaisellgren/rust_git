@@ -148,7 +148,8 @@ pub fn find(repository: &Repository, filter: CommitFilter) -> Result<Vec<Commit>
 
     match filter.sort {
         MostRecent => {
-            let mut commits: Vec<Commit> = since_ids.iter().map(|id| find_commit(id, repository).unwrap()).collect();
+            let result: Result<Vec<Commit>, GitError> = since_ids.iter().map(|id| find_commit(id, repository)).collect();
+            let mut commits: Vec<Commit> = try!(result);
 
             loop {
                 if commits.len() == 0 || buffer.len() == filter.limit {
@@ -162,12 +163,16 @@ pub fn find(repository: &Repository, filter: CommitFilter) -> Result<Vec<Commit>
                 let index = commits.iter().position(|c| *c == most_recent).unwrap();
                 commits.remove(index);
 
-                let parent_commits: Result<Vec<Commit>, GitError> = most_recent.parent_ids.iter()
-                    .filter(|id| !commits.iter().any(|c| c.meta.id == **id))
-                    .map(|id| find_commit(id, repository))
-                    .collect();
+                let parents = {
+                    let commit_id_matches = |id: &ObjectId| !commits.iter().any(|c| c.meta.id == *id);
 
-                let parents = try!(parent_commits);
+                    let parent_commits: Result<Vec<Commit>, GitError> = most_recent.parent_ids.move_iter()
+                        .filter(commit_id_matches)
+                        .map(|id| find_commit(&id, repository))
+                        .collect();
+
+                    try!(parent_commits)
+                };
 
                 commits.push_all(parents.as_slice());
             }
