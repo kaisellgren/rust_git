@@ -18,7 +18,7 @@ use repository::Repository;
 pub fn find_object_by_id(repository: &Repository, id: &ObjectId) -> Result<Box<EObject>, GitError> {
     let part1 = id.hash.as_slice().slice_to(2);
     let part2 = id.hash.as_slice().slice_from(2);
-    let path = Path::new(format!("{}objects/{}/{}", repository.path, part1, part2));
+    let path = Path::new(format!("{}objects/{}/{}", repository.path.dirname(), part1, part2));
 
     if path.exists() {
         let mut file = File::open(&path);
