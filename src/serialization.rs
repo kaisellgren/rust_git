@@ -1,11 +1,30 @@
 use commit::Commit;
 use std::str::UnicodeStrSlice;
 use std::from_str::FromStr;
+use object_header::ObjectHeader;
+use object_header;
 use reader::Reader;
+use has_meta::HasMeta;
 
-pub trait Serializable {
-    fn encode(&self) -> Vec<u8>;
-    fn encode_body(&self) -> Vec<u8>;
+pub fn encode(object: &HasMeta, body: &[u8]) -> Vec<u8> {
+    let mut buff = Vec::new();
+    let mut header = object.get_meta().header;
+
+    if header.length == 0 {
+        header.length = body.len();
+    }
+
+    buff.push_all(header.encode().as_slice());
+    buff.push_all(body);
+
+    buff
+}
+
+pub fn decode(bytes: &[u8]) -> (&[u8], ObjectHeader) {
+    let header = object_header::decode(bytes);
+    let data = bytes.slice_from(bytes.len() - header.length);
+
+    (data, header)
 }
 
 pub fn encode_author_info(commit: &Commit) -> Vec<u8> {

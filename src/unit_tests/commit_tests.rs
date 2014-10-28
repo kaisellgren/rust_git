@@ -8,7 +8,6 @@ use object_header::ObjectHeader;
 use object_id::ObjectId;
 use meta::Meta;
 use repository::Repository;
-use serialization::Serializable;
 use object_database;
 use commit_filter::CommitFilter;
 use commit_sort_strategy;
@@ -40,7 +39,7 @@ fn create_test_commit() -> Commit {
 #[test]
 fn encode_commit() {
     let expected = File::open(&Path::new("resources/tests/commit")).read_to_end().unwrap();
-    let encoded = create_test_commit().encode();
+    let encoded = commit::encode(&create_test_commit());
 
     assert_eq!(expected, encoded);
 }

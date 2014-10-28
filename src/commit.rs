@@ -3,7 +3,6 @@ use object_header::ObjectHeader;
 use object_header;
 use object_type;
 use meta::Meta;
-use serialization::Serializable;
 use serialization;
 use reader::Reader;
 use error::GitError;
@@ -16,6 +15,7 @@ use eobject::ECommit;
 use commit_sort_strategy::MostRecent;
 use extensions;
 use std::collections::HashSet;
+use has_meta::HasMeta;
 
 #[deriving(PartialEq, Show, Clone)]
 pub struct Commit {
@@ -31,47 +31,36 @@ pub struct Commit {
     pub parent_ids: Vec<ObjectId>,
 }
 
-impl Serializable for Commit {
-    fn encode(&self) -> Vec<u8> {
-        let mut buff = Vec::new();
-        let mut header = self.meta.header;
-
-        let body_buff = self.encode_body();
-
-        if header.length == 0 {
-            header.length = body_buff.len();
-        }
-
-        let header_buff = header.encode();
-
-        buff.push_all(header_buff.as_slice());
-        buff.push_all(body_buff.as_slice());
-
-        buff
-    }
-
-    fn encode_body(&self) -> Vec<u8> {
-        let mut buff = Vec::new();
-
-        buff.push_all(format!("tree {}\n", self.tree_id.hash).into_bytes().as_slice());
-
-        for id in self.parent_ids.iter() {
-            buff.push_all(format!("parent {}\n", id.hash).into_bytes().as_slice());
-        }
-
-        buff.push_all(serialization::encode_author_info(self).as_slice());
-        buff.push_all(serialization::encode_commit_info(self).as_slice());
-
-        buff.push_all(format!("\n{}", self.message).into_bytes().as_slice());
-
-        buff
+impl HasMeta for Commit {
+    fn get_meta(&self) -> &Meta {
+        &self.meta
     }
 }
 
-pub fn decode(bytes: &[u8]) -> Result<Commit, GitError> {
-    let header = object_header::decode(bytes);
+pub fn encode(commit: &Commit) -> Vec<u8> {
+    serialization::encode(commit, encode_body(commit).as_slice())
+}
 
-    decode_body(bytes.slice_from(bytes.len() - header.length), &header)
+pub fn encode_body(commit: &Commit) -> Vec<u8> {
+    let mut buff = Vec::new();
+
+    buff.push_all(format!("tree {}\n", commit.tree_id.hash).into_bytes().as_slice());
+
+    for id in commit.parent_ids.iter() {
+        buff.push_all(format!("parent {}\n", id.hash).into_bytes().as_slice());
+    }
+
+    buff.push_all(serialization::encode_author_info(commit).as_slice());
+    buff.push_all(serialization::encode_commit_info(commit).as_slice());
+
+    buff.push_all(format!("\n{}", commit.message).into_bytes().as_slice());
+
+    buff
+}
+
+pub fn decode(bytes: &[u8]) -> Result<Commit, GitError> {
+    let (data, header) = serialization::decode(bytes);
+    decode_body(data, &header)
 }
 
 pub fn decode_body(bytes: &[u8], header: &ObjectHeader) -> Result<Commit, GitError> {
