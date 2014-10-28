@@ -26,3 +26,4 @@ mod object_database;
 mod commit_sort_strategy;
 mod commit_filter;
 mod extensions;
+mod file_util;
