@@ -14,6 +14,7 @@ pub struct Repository {
     pub branches: Vec<Branch>,
     pub references: Vec<Reference>,
     pub pack_indexes: Vec<PackIndex>,
+    pub bare: bool,
 }
 
 impl Repository {
@@ -32,6 +33,24 @@ impl Repository {
             branches: Vec::new(),
             references: Vec::new(),
             pack_indexes: Vec::new(),
+            bare: false,
+        }
+    }
+
+    pub fn open_bare(path: &str) -> Repository {
+        let repository_path = Path::new(path);
+        let wc_path = repository_path.clone();
+
+        init(&repository_path);
+
+        Repository {
+            path: repository_path,
+            wc_path: wc_path,
+            tags: Vec::new(),
+            branches: Vec::new(),
+            references: Vec::new(),
+            pack_indexes: Vec::new(),
+            bare: true,
         }
     }
 }
