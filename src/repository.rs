@@ -18,17 +18,15 @@ pub struct Repository {
 }
 
 impl Repository {
-    pub fn open(path: &str) -> Repository {
-        let wc_path = Path::new(path);
-
-        let mut repository_path = Path::new(path);
+    pub fn open(path: &Path) -> Repository {
+        let mut repository_path = path.clone();
         repository_path.push(".git/");
 
         init(&repository_path);
 
         Repository {
             path: repository_path,
-            wc_path: wc_path,
+            wc_path: path.clone(),
             tags: Vec::new(),
             branches: Vec::new(),
             references: Vec::new(),
@@ -37,15 +35,14 @@ impl Repository {
         }
     }
 
-    pub fn open_bare(path: &str) -> Repository {
-        let repository_path = Path::new(path);
-        let wc_path = repository_path.clone();
+    pub fn open_bare(path: &Path) -> Repository {
+        let repository_path = path.clone();
 
         init(&repository_path);
 
         Repository {
             path: repository_path,
-            wc_path: wc_path,
+            wc_path: path.clone(),
             tags: Vec::new(),
             branches: Vec::new(),
             references: Vec::new(),
