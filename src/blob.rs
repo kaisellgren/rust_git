@@ -3,7 +3,11 @@ use serialization;
 use has_meta::HasMeta;
 use object_header::ObjectHeader;
 use error::GitError;
+use error::NotFound;
 use object_id::ObjectId;
+use repository::Repository;
+use object_database;
+use eobject::EBlob;
 
 #[deriving(PartialEq, Show)]
 pub struct Blob {
@@ -27,7 +31,7 @@ pub fn decode(bytes: &[u8]) -> Result<Blob, GitError> {
     decode_body(data, &header)
 }
 
-fn decode_body(bytes: &[u8], header: &ObjectHeader) -> Result<Blob, GitError> {
+pub fn decode_body(bytes: &[u8], header: &ObjectHeader) -> Result<Blob, GitError> {
     Ok(Blob {
         meta: Meta {
             id: ObjectId::from_string("b744d5cddb5095249299d95ee531cbd990741140"),
@@ -36,4 +40,12 @@ fn decode_body(bytes: &[u8], header: &ObjectHeader) -> Result<Blob, GitError> {
         size: bytes.len(),
         contents: bytes.into_vec(),
     })
+}
+
+pub fn find(id: &ObjectId, repository: &Repository) -> Result<Blob, GitError> {
+    match object_database::find_object_by_id(repository, id) {
+        Ok(box EBlob(c)) => Ok(c),
+        Err(e) => Err(e),
+        _ => Err(NotFound),
+    }
 }
