@@ -28,3 +28,4 @@ mod commit_filter;
 mod extensions;
 mod file_util;
 mod has_meta;
+mod reference_collection;
