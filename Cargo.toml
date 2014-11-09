@@ -7,4 +7,4 @@ authors = ["Kai Sellgren <kaisellgren@gmail.com>"]
 [lib]
 
 name = "rust_git"
-path = "src/lib.rs"
+path = "src/rust_git.rs"
