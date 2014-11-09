@@ -119,6 +119,14 @@ pub fn decode_body(bytes: &[u8], header: &ObjectHeader) -> Result<Commit, GitErr
     })
 }
 
+pub fn find_one(id: &ObjectId, repository: &Repository) -> Result<Commit, GitError> {
+    match object_database::find_object_by_id(repository, id) {
+        Ok(box ECommit(c)) => Ok(c),
+        Err(e) => Err(e),
+        _ => Err(NotFound),
+    }
+}
+
 pub fn find(repository: &Repository, filter: CommitFilter) -> Result<Vec<Commit>, GitError> {
     let mut buffer = Vec::new();
 
@@ -127,17 +135,9 @@ pub fn find(repository: &Repository, filter: CommitFilter) -> Result<Vec<Commit>
         _ => Vec::new(),
     };
 
-    fn find_commit(id: &ObjectId, repository: &Repository) -> Result<Commit, GitError> {
-        match object_database::find_object_by_id(repository, id) {
-            Ok(box ECommit(c)) => Ok(c),
-            Err(e) => Err(e),
-            _ => Err(NotFound),
-        }
-    };
-
     match filter.sort {
         MostRecent => {
-            let result: Result<Vec<Commit>, GitError> = since_ids.iter().map(|id| find_commit(id, repository)).collect();
+            let result: Result<Vec<Commit>, GitError> = since_ids.iter().map(|id| find_one(id, repository)).collect();
             let mut commits: Vec<Commit> = try!(result);
 
             loop {
@@ -157,7 +157,7 @@ pub fn find(repository: &Repository, filter: CommitFilter) -> Result<Vec<Commit>
 
                     let parent_commits: Result<Vec<Commit>, GitError> = most_recent.parent_ids.move_iter()
                         .filter(commit_id_matches)
-                        .map(|id| find_commit(&id, repository))
+                        .map(|id| find_one(&id, repository))
                         .collect();
 
                     try!(parent_commits)
