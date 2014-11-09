@@ -1,5 +1,7 @@
 #![allow(dead_code, unused_imports)]
 
+//! RustGit provides facilities for reading, manipulating and creating Git repositories.
+
 extern crate flate;
 
 pub mod commit;
