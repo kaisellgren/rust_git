@@ -1,3 +1,5 @@
+//! Represents Git tags.
+
 use meta::Meta;
 use tag_type::TagType;
 use object_id::ObjectId;

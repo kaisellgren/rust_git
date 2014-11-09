@@ -1,3 +1,5 @@
+//! Every index file status.
+
 pub enum FileStatus {
     NonExistent,
     Current,

@@ -1,3 +1,5 @@
+//! Every rust_git error.
+
 use std::fmt;
 
 #[deriving(Show)]

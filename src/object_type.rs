@@ -1,3 +1,5 @@
+//! Represents the types of Git objects.
+
 #[deriving(PartialEq, Show, Clone)]
 pub enum ObjectType {
     Commit,

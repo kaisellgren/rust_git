@@ -1,3 +1,5 @@
+//! Represents Git identifiers.
+
 use conversion;
 
 pub static RAW_SIZE: uint = 20;

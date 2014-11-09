@@ -1,6 +1,16 @@
-#![allow(dead_code, unused_imports)]
-
 //! RustGit provides facilities for reading, manipulating and creating Git repositories.
+//!
+//! ### Finding a changeset
+//! ```rust,no_run
+//! fn get_message_by_commit_id(id: &ObjectId) -> Result<String, GitError> {
+//!     let path = Path::new("/path/to/repo");
+//!     let repo = Repository::open(&path);
+//!     commit::find_one(&id, &repo).map(|commit| commit.message)
+//! }
+//! ```
+
+#![doc(html_root_url="https://kaisellgren.github.io/doc")]
+#![allow(dead_code, unused_imports)]
 
 extern crate flate;
 

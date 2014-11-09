@@ -1,3 +1,5 @@
+//! Represents Git branches.
+
 use object_id::ObjectId;
 use object_database::find_object_by_id;
 use error::CorruptRepository;

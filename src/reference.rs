@@ -1,3 +1,5 @@
+//! Repository references.
+
 use object_id::ObjectId;
 
 static LOCAL_BRANCH_PREFIX: &'static str = "/refs/heads/";

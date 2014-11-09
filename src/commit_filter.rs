@@ -1,3 +1,5 @@
+//! A filter that specifies which changesets are queried.
+
 use commit_sort_strategy;
 use object_id::ObjectId;
 

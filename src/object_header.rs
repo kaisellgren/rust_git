@@ -1,3 +1,5 @@
+//! A generic header for every Git object.
+
 use object_type::ObjectType;
 use object_type;
 use reader::Reader;

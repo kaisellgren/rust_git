@@ -1,3 +1,5 @@
+//! Meta information about Git objects.
+
 use object_id::ObjectId;
 use object_header::ObjectHeader;
 

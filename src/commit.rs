@@ -1,3 +1,5 @@
+//! Represents Git changesets.
+
 use object_id::ObjectId;
 use object_header::ObjectHeader;
 use object_header;

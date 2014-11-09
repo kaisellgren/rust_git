@@ -1,3 +1,5 @@
+//! Utilities for working with the repository.
+
 use std::io::File;
 use std::str;
 use commit;

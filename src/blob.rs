@@ -1,3 +1,5 @@
+//! Represents Git blob objects.
+
 use meta::Meta;
 use serialization;
 use has_meta::HasMeta;
@@ -9,6 +11,7 @@ use repository::Repository;
 use object_database;
 use eobject::EBlob;
 
+/// Represents a blob object.
 #[deriving(PartialEq, Show)]
 pub struct Blob {
     pub meta: Meta,
