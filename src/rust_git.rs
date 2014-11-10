@@ -1,6 +1,11 @@
-//! RustGit provides facilities for reading, manipulating and creating Git repositories.
+//! `rust_git` provides facilities for reading, manipulating and creating Git repositories.
 //!
+//! The project is still in its early stages.
+//!
+//! # Examples
 //! ### Finding a changeset
+//! The following example finds a changeset and returns its message.
+//!
 //! ```rust,no_run
 //! fn get_message_by_commit_id(id: &ObjectId) -> Result<String, GitError> {
 //!     let path = Path::new("/path/to/repo");
