@@ -56,8 +56,8 @@ impl Repository {
 
 fn init(repository_path: &Path) {
     let ensure_folders_exist = || {
-        let paths = vec!["objects/pack", "objects/info", "objects/refs/tags", "objects/refs/notes",
-            "objects/refs/remotes", "objects/refs/heads"];
+        let paths = vec!["objects/pack", "objects/info", "refs/heads", "refs/remotes", "refs/tags",
+            "refs/tags"];
 
         for p in paths.iter() {
             mkdir_recursive(&repository_path.join(*p), FilePermission::all());
@@ -66,10 +66,12 @@ fn init(repository_path: &Path) {
 
     let create_default_files = || {
         create_file_with_contents(&repository_path.join("HEAD"), b"ref: refs/heads/master\n");
-        create_file_with_contents(&repository_path.join("description"), b"Unnamed repository; edit this file 'description' to name the repository.\n");
+        create_file_with_contents(&repository_path.join("description"), b"Unnamed repository; edit\n
+this file 'description' to name the repository.\n");
 
         // TODO: Let's implement a Config struct or something.
-        create_file_with_contents(&repository_path.join("config"), b"[core]\nrepositoryformatversion = 0\nfilemode = false\nbare = false\nlogallrefupdates = true\nsymlinks = false\nignorecase = true\nhideDotFiles = dotGitOnly");
+        create_file_with_contents(&repository_path.join("config"), b"[core]\nrepositoryformatversion\n
+= 0\nfilemode = false\nbare = false\nlogallrefupdates = true\nsymlinks = false\nignorecase = true\nhideDotFiles = dotGitOnly");
     };
 
     ensure_folders_exist();
