@@ -1,5 +1,6 @@
 use reference::Reference;
 
+#[deriving(PartialEq, Show, Clone)]
 pub struct ReferenceCollection {
     pub head: Option<Reference>,
     pub local_references: Vec<Reference>,
