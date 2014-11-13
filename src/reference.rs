@@ -6,6 +6,7 @@ use reference_collection::ReferenceCollection;
 use std::io::fs::File;
 use std::io::fs::readdir;
 use std::io::IoError;
+use error::CorruptRepository;
 
 static LOCAL_BRANCH_PREFIX:           &'static str = "refs/heads/";
 static REMOTE_TRACKING_BRANCH_PREFIX: &'static str = "refs/remotes/";
@@ -22,20 +23,20 @@ pub struct Reference {
 pub fn find(repository: &Repository) -> Result<ReferenceCollection, IoError> {
     let local_files = try!(readdir(&repository.path.join(LOCAL_BRANCH_PREFIX)));
 
-    let local_references: Vec<Option<Reference>> = local_files.iter().map(|entry| {
-        if entry.is_file() {
-            Some(Reference {
-                canonical_name: entry.filename_str().unwrap().into_string(),
-                target_identifier: ObjectId::from_string(File::open(entry).read_to_string().unwrap().as_slice()), // TODO: TRIM!
-                remote_name: None
-            })
-        } else {
-            None
+    let local_references: Vec<Reference> = local_files.iter().filter(|e| e.is_file()).map(|entry| {
+        Reference {
+            canonical_name: entry.filename_str().unwrap().into_string(),
+            target_identifier: ObjectId::from_string(File::open(entry).read_to_string().unwrap().as_slice()), // TODO: TRIM!
+            remote_name: None
         }
     }).collect();
 
+    let head_contents = try!(File::open(&repository.path.join("HEAD")).read_to_string());
+    let head_name = head_contents.replace("ref: refs/heads/", "").as_slice().trim_right().into_string();
+    let head = local_references.move_iter().find(|r| r.canonical_name == head_name);
+
     Ok(ReferenceCollection {
-        head: None,
+        head: head,
         local_references: Vec::new(),
         remote_references: Vec::new(),
     })
