@@ -7,7 +7,7 @@ use error::GitError;
 use repository::Repository;
 use commit::Commit;
 use commit;
-use eobject::EObject::ECommit;
+use git_object::GitObject::GitCommit;
 use commit_sort_strategy::CommitSortStrategy::MostRecent;
 use commit_filter::CommitFilter;
 
@@ -28,7 +28,7 @@ impl Branch {
 
 pub fn tip(repository: &Repository, branch: &Branch) -> Result<Commit, GitError> {
     match try!(find_object_by_id(repository, &branch.tip_id)) {
-        box ECommit(c) => Ok(c),
+        box GitCommit(c) => Ok(c),
         _ => Err(CorruptRepository("Could not find the commit the branch points to")),
     }
 }

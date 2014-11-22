@@ -29,7 +29,7 @@ pub mod meta;
 pub mod object_id;
 pub mod object_header;
 pub mod object_type;
-mod eobject;
+mod git_object;
 mod unit_tests;
 mod serialization;
 mod reader;

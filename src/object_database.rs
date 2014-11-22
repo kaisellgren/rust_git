@@ -5,8 +5,8 @@ use std::str;
 use std::io::fs::PathExtensions;
 use commit;
 use commit::Commit;
-use eobject::EObject;
-use eobject::EObject::ECommit;
+use git_object::GitObject;
+use git_object::GitObject::GitCommit;
 use object_type::ObjectType;
 use object_header;
 use object_id::ObjectId;
@@ -16,7 +16,7 @@ use flate::inflate_bytes_zlib;
 use object_header::ObjectHeader;
 use repository::Repository;
 
-pub fn find_object_by_id(repository: &Repository, id: &ObjectId) -> Result<Box<EObject>, GitError> {
+pub fn find_object_by_id(repository: &Repository, id: &ObjectId) -> Result<Box<GitObject>, GitError> {
     let part1 = id.hash.as_slice().slice_to(2);
     let part2 = id.hash.as_slice().slice_from(2);
     let path = Path::new(format!("{}objects/{}/{}", repository.path.dirname(), part1, part2));
@@ -30,7 +30,7 @@ pub fn find_object_by_id(repository: &Repository, id: &ObjectId) -> Result<Box<E
         let object_data = data.as_slice().slice_from(data.len() - header.length);
 
         match header.typ {
-            ObjectType::Commit => commit::decode_body(object_data, &header).map(|c| box ECommit(c)),
+            ObjectType::Commit => commit::decode_body(object_data, &header).map(|c| box GitCommit(c)),
             ObjectType::Blob => Err(NotFound),
             ObjectType::Tag => Err(NotFound),
             ObjectType::Note => Err(NotFound),

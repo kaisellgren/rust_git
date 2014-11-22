@@ -13,7 +13,7 @@ use error::GitError::NotFound;
 use repository::Repository;
 use commit_filter::CommitFilter;
 use object_database::find_object_by_id;
-use eobject::EObject::ECommit;
+use git_object::GitObject::GitCommit;
 use commit_sort_strategy::CommitSortStrategy::MostRecent;
 use extensions;
 use std::collections::HashSet;
@@ -123,7 +123,7 @@ pub fn decode_body(bytes: &[u8], header: &ObjectHeader) -> Result<Commit, GitErr
 
 pub fn find_one(id: &ObjectId, repository: &Repository) -> Result<Commit, GitError> {
     match try!(find_object_by_id(repository, id)) {
-        box ECommit(c) => Ok(c),
+        box GitCommit(c) => Ok(c),
         _ => Err(NotFound),
     }
 }

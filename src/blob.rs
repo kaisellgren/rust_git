@@ -9,7 +9,7 @@ use error::GitError::NotFound;
 use object_id::ObjectId;
 use repository::Repository;
 use object_database::find_object_by_id;
-use eobject::EObject::EBlob;
+use git_object::GitObject::GitBlob;
 
 /// Represents a blob object.
 #[deriving(PartialEq, Show)]
@@ -47,7 +47,7 @@ pub fn decode_body(bytes: &[u8], header: &ObjectHeader) -> Result<Blob, GitError
 
 pub fn find(id: &ObjectId, repository: &Repository) -> Result<Blob, GitError> {
     match try!(find_object_by_id(repository, id)) {
-        box EBlob(c) => Ok(c),
+        box GitBlob(c) => Ok(c),
         _ => Err(NotFound),
     }
 }

@@ -1,8 +1,8 @@
 use std::io::File;
 use commit::Commit;
 use commit;
-use eobject::EObject;
-use eobject::EObject::ECommit;
+use git_object::GitObject;
+use git_object::GitObject::GitCommit;
 use object_type::ObjectType;
 use object_header::ObjectHeader;
 use object_id::ObjectId;
