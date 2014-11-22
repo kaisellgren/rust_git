@@ -2,13 +2,13 @@
 
 use object_id::ObjectId;
 use object_database::find_object_by_id;
-use error::CorruptRepository;
+use error::GitError::CorruptRepository;
 use error::GitError;
 use repository::Repository;
 use commit::Commit;
 use commit;
-use eobject::ECommit;
-use commit_sort_strategy::MostRecent;
+use eobject::EObject::ECommit;
+use commit_sort_strategy::CommitSortStrategy::MostRecent;
 use commit_filter::CommitFilter;
 
 pub struct Branch {

@@ -8,13 +8,13 @@ use meta::Meta;
 use serialization;
 use reader::Reader;
 use error::GitError;
-use error::CorruptCommit;
-use error::NotFound;
+use error::GitError::CorruptCommit;
+use error::GitError::NotFound;
 use repository::Repository;
 use commit_filter::CommitFilter;
 use object_database;
-use eobject::ECommit;
-use commit_sort_strategy::MostRecent;
+use eobject::EObject::ECommit;
+use commit_sort_strategy::CommitSortStrategy::MostRecent;
 use extensions;
 use std::collections::HashSet;
 use has_meta::HasMeta;
@@ -157,7 +157,7 @@ pub fn find(repository: &Repository, filter: CommitFilter) -> Result<Vec<Commit>
                 let parents = {
                     let commit_id_matches = |id: &ObjectId| !commits.iter().any(|c| c.meta.id == *id);
 
-                    let parent_commits: Result<Vec<Commit>, GitError> = most_recent.parent_ids.move_iter()
+                    let parent_commits: Result<Vec<Commit>, GitError> = most_recent.parent_ids.into_iter()
                         .filter(commit_id_matches)
                         .map(|id| find_one(&id, repository))
                         .collect();

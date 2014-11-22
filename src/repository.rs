@@ -7,6 +7,7 @@ use reference::Reference;
 use pack_index::PackIndex;
 use std::io::fs::mkdir_recursive;
 use std::io::FilePermission;
+use std::io::fs::PathExtensions;
 use file_util::create_file_with_contents;
 
 pub struct Repository {

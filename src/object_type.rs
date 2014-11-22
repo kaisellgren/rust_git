@@ -12,22 +12,22 @@ pub enum ObjectType {
 impl ObjectType {
     pub fn to_text(&self) -> &str {
         match *self {
-            Commit => "commit",
-            Tree => "tree",
-            Blob => "blob",
-            Tag => "tag",
-            Note => "note",
+            ObjectType::Commit => "commit",
+            ObjectType::Tree => "tree",
+            ObjectType::Blob => "blob",
+            ObjectType::Tag => "tag",
+            ObjectType::Note => "note",
         }
     }
 }
 
 pub fn from_text(text: &str) -> ObjectType {
     match text {
-        "commit" => Commit,
-        "tree" => Tree,
-        "blob" => Blob,
-        "tag" => Tag,
-        "note" => Note,
-        _ => fail!("Cannot convert `{}` to an ObjectType!", text)
+        "commit" => ObjectType::Commit,
+        "tree" => ObjectType::Tree,
+        "blob" => ObjectType::Blob,
+        "tag" => ObjectType::Tag,
+        "note" => ObjectType::Note,
+        _ => panic!("Cannot convert `{}` to an ObjectType!", text)
     }
 }

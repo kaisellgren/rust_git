@@ -2,8 +2,8 @@ use std::io::File;
 use commit::Commit;
 use commit;
 use eobject::EObject;
-use eobject::ECommit;
-use object_type;
+use eobject::EObject::ECommit;
+use object_type::ObjectType;
 use object_header::ObjectHeader;
 use object_id::ObjectId;
 use meta::Meta;
@@ -17,7 +17,7 @@ fn create_test_commit() -> Commit {
         meta: Meta {
             id: ObjectId::from_string("b744d5cddb5095249299d95ee531cbd990741140"),
             header: ObjectHeader {
-                typ: object_type::Commit,
+                typ: ObjectType::Commit,
                 length: 271
             },
         },

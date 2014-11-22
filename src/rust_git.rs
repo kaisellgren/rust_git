@@ -7,10 +7,15 @@
 //! The following example finds a changeset and returns its message.
 //!
 //! ```rust,no_run
+//! use rust_git::object_id::ObjectId;
+//! use rust_git::error::GitError;
+//! use rust_git::repository::Repository;
+//! use rust_git::commit;
+//!
 //! fn get_message_by_commit_id(id: &ObjectId) -> Result<String, GitError> {
 //!     let path = Path::new("/path/to/repo");
 //!     let repo = Repository::open(&path);
-//!     commit::find_one(&id, &repo).map(|commit| commit.message)
+//!     commit::find_one(id, &repo).map(|commit| commit.message)
 //! }
 //! ```
 

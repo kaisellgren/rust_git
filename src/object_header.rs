@@ -3,7 +3,7 @@
 use object_type::ObjectType;
 use object_type;
 use reader::Reader;
-use std::from_str::FromStr;
+use std::str::FromStr;
 
 #[deriving(PartialEq, Show, Clone)]
 pub struct ObjectHeader {

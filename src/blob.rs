@@ -5,11 +5,11 @@ use serialization;
 use has_meta::HasMeta;
 use object_header::ObjectHeader;
 use error::GitError;
-use error::NotFound;
+use error::GitError::NotFound;
 use object_id::ObjectId;
 use repository::Repository;
 use object_database;
-use eobject::EBlob;
+use eobject::EObject::EBlob;
 
 /// Represents a blob object.
 #[deriving(PartialEq, Show)]
@@ -41,7 +41,7 @@ pub fn decode_body(bytes: &[u8], header: &ObjectHeader) -> Result<Blob, GitError
             header: *header,
         },
         size: bytes.len(),
-        contents: bytes.into_vec(),
+        contents: bytes.to_vec(),
     })
 }
 

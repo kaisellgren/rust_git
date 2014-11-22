@@ -6,7 +6,8 @@ use reference_collection::ReferenceCollection;
 use std::io::fs::File;
 use std::io::fs::readdir;
 use std::io::IoError;
-use error::CorruptRepository;
+use std::io::fs::PathExtensions;
+use error::GitError::CorruptRepository;
 
 static LOCAL_BRANCH_PREFIX:           &'static str = "refs/heads/";
 static REMOTE_TRACKING_BRANCH_PREFIX: &'static str = "refs/remotes/";
@@ -33,7 +34,7 @@ pub fn find(repository: &Repository) -> Result<ReferenceCollection, IoError> {
 
     let head_contents = try!(File::open(&repository.path.join("HEAD")).read_to_string());
     let head_name = head_contents.replace("ref: refs/heads/", "").as_slice().trim_right().into_string();
-    let head = local_references.move_iter().find(|r| r.canonical_name == head_name);
+    let head = local_references.into_iter().find(|r| r.canonical_name == head_name);
 
     Ok(ReferenceCollection {
         head: head,

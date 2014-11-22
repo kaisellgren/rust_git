@@ -1,6 +1,5 @@
 use std::str;
 use std::num::FromStrRadix;
-use std::num::ToStrRadix;
 
 static HEX_ARRAY: &'static [u8] = b"0123456789abcdef";
 

@@ -1,6 +1,5 @@
 use commit::Commit;
-use std::str::UnicodeStrSlice;
-use std::from_str::FromStr;
+use std::str::FromStr;
 use object_header::ObjectHeader;
 use object_header;
 use reader::Reader;

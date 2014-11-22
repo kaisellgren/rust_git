@@ -22,7 +22,7 @@ impl ObjectId {
     pub fn from_bytes(bytes: &[u8]) -> ObjectId {
         ObjectId {
             hash: conversion::bytes_to_hex_string(bytes),
-            bytes: bytes.into_vec()
+            bytes: bytes.to_vec()
         }
     }
 }
