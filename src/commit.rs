@@ -12,7 +12,7 @@ use error::GitError::CorruptCommit;
 use error::GitError::NotFound;
 use repository::Repository;
 use commit_filter::CommitFilter;
-use object_database;
+use object_database::find_object_by_id;
 use eobject::EObject::ECommit;
 use commit_sort_strategy::CommitSortStrategy::MostRecent;
 use extensions;
@@ -122,9 +122,8 @@ pub fn decode_body(bytes: &[u8], header: &ObjectHeader) -> Result<Commit, GitErr
 }
 
 pub fn find_one(id: &ObjectId, repository: &Repository) -> Result<Commit, GitError> {
-    match object_database::find_object_by_id(repository, id) {
-        Ok(box ECommit(c)) => Ok(c),
-        Err(e) => Err(e),
+    match try!(find_object_by_id(repository, id)) {
+        box ECommit(c) => Ok(c),
         _ => Err(NotFound),
     }
 }
