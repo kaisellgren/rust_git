@@ -2,8 +2,6 @@
 
 use object_id::ObjectId;
 use object_header::ObjectHeader;
-use object_header;
-use object_type;
 use meta::Meta;
 use serialization;
 use reader::Reader;
@@ -16,7 +14,6 @@ use object_database::find_object_by_id;
 use git_object::GitObject::GitCommit;
 use commit_sort_strategy::CommitSortStrategy::MostRecent;
 use extensions;
-use std::collections::HashSet;
 use has_meta::HasMeta;
 
 #[deriving(PartialEq, Show, Clone)]

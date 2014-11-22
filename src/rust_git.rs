@@ -20,7 +20,7 @@
 //! ```
 
 #![doc(html_root_url="https://kaisellgren.github.io/doc")]
-#![allow(dead_code, unused_imports)]
+#![allow(dead_code)]
 
 extern crate flate;
 

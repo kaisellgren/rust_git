@@ -1,6 +1,5 @@
 //! Represents the actual Git repository.
 
-use object_id::ObjectId;
 use tag::Tag;
 use branch::Branch;
 use reference::Reference;

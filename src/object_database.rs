@@ -1,10 +1,8 @@
 //! Utilities for working with the repository.
 
 use std::io::File;
-use std::str;
 use std::io::fs::PathExtensions;
 use commit;
-use commit::Commit;
 use git_object::GitObject;
 use git_object::GitObject::GitCommit;
 use object_type::ObjectType;
@@ -13,7 +11,6 @@ use object_id::ObjectId;
 use error::GitError;
 use error::GitError::NotFound;
 use flate::inflate_bytes_zlib;
-use object_header::ObjectHeader;
 use repository::Repository;
 
 pub fn find_object_by_id(repository: &Repository, id: &ObjectId) -> Result<Box<GitObject>, GitError> {

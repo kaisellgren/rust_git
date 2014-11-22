@@ -7,7 +7,6 @@ use std::io::fs::File;
 use std::io::fs::readdir;
 use std::io::IoError;
 use std::io::fs::PathExtensions;
-use error::GitError::CorruptRepository;
 
 static LOCAL_BRANCH_PREFIX:           &'static str = "refs/heads/";
 static REMOTE_TRACKING_BRANCH_PREFIX: &'static str = "refs/remotes/";
