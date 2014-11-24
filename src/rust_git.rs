@@ -14,7 +14,7 @@
 //!
 //! fn get_message_by_commit_id(id: &ObjectId) -> Result<String, GitError> {
 //!     let path = Path::new("/path/to/repo");
-//!     let repo = Repository::open(&path);
+//!     let repo = try!(Repository::open(&path));
 //!     commit::find_one(id, &repo).map(|commit| commit.message)
 //! }
 //! ```
@@ -51,3 +51,4 @@ mod extensions;
 mod file_util;
 mod has_meta;
 mod reference_collection;
+pub mod result;

@@ -1,8 +1,10 @@
 use repository::Repository;
 use std::io::fs::rmdir_recursive;
 use reference;
+use error::GitError;
+use result::EmptyResult;
 
-fn open() -> Repository {
+fn open() -> Result<Repository, GitError> {
     Repository::open_bare(&Path::new("resources/repositories/one"))
 }
 
@@ -15,6 +17,6 @@ fn can_create_new() {
 
 #[test]
 fn can_find_references() {
-    let repo = open();
+    let repo = open().unwrap();
     reference::find(&repo).unwrap();
 }
