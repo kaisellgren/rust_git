@@ -1,5 +1,4 @@
 use std::io::File;
-use error::GitError;
 use result::EmptyResult;
 
 pub fn create_file_with_contents(path: &Path, contents: &[u8]) -> EmptyResult {

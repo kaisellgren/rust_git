@@ -4,6 +4,7 @@ use object_type::ObjectType;
 use object_type;
 use reader::Reader;
 use std::str::FromStr;
+use error::GitError;
 
 #[deriving(PartialEq, Show, Clone)]
 pub struct ObjectHeader {
@@ -23,17 +24,17 @@ impl ObjectHeader {
     }
 }
 
-pub fn decode(bytes: &[u8]) -> ObjectHeader {
+pub fn decode(bytes: &[u8]) -> Result<ObjectHeader, GitError> {
     let mut reader = Reader::from_data(bytes);
 
-    let typ = object_type::from_text(reader.take_string_while(|c| *c != 32));
+    let typ = try!(object_type::from_text(reader.take_string_while(|c| *c != 32)));
 
     reader.skip(1);
 
     let length: uint = FromStr::from_str(reader.take_string_while(|c| *c != 0)).unwrap();
 
-    ObjectHeader {
+    Ok(ObjectHeader {
         typ: typ,
         length: length
-    }
+    })
 }

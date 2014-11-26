@@ -23,15 +23,12 @@ pub fn find_object_by_id(repository: &Repository, id: &ObjectId) -> Result<Box<G
         let bytes = file.read_to_end().unwrap();
         let data = inflate_bytes_zlib(bytes.as_slice()).unwrap();
 
-        let header = object_header::decode(data.as_slice());
+        let header = try!(object_header::decode(data.as_slice()));
         let object_data = data.as_slice().slice_from(data.len() - header.length);
 
         match header.typ {
             ObjectType::Commit => commit::decode_body(object_data, &header).map(|c| box GitCommit(c)),
-            ObjectType::Blob => Err(NotFound),
-            ObjectType::Tag => Err(NotFound),
-            ObjectType::Note => Err(NotFound),
-            ObjectType::Tree => Err(NotFound),
+            _ => Err(NotFound),
         }
     } else {
         Err(NotFound)

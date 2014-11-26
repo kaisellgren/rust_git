@@ -4,6 +4,7 @@ use object_header::ObjectHeader;
 use object_header;
 use reader::Reader;
 use has_meta::HasMeta;
+use error::GitError;
 
 pub fn encode(object: &HasMeta, body: &[u8]) -> Vec<u8> {
     let mut buff = Vec::new();
@@ -19,11 +20,11 @@ pub fn encode(object: &HasMeta, body: &[u8]) -> Vec<u8> {
     buff
 }
 
-pub fn decode(bytes: &[u8]) -> (&[u8], ObjectHeader) {
-    let header = object_header::decode(bytes);
+pub fn decode(bytes: &[u8]) -> Result<(&[u8], ObjectHeader), GitError> {
+    let header = try!(object_header::decode(bytes));
     let data = bytes.slice_from(bytes.len() - header.length);
 
-    (data, header)
+    Ok((data, header))
 }
 
 pub fn encode_author_info(commit: &Commit) -> Vec<u8> {

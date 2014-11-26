@@ -30,19 +30,19 @@ pub fn encode(blob: &Blob) -> Vec<u8> {
 }
 
 pub fn decode(bytes: &[u8]) -> Result<Blob, GitError> {
-    let (data, header) = serialization::decode(bytes);
-    decode_body(data, &header)
+    let (data, header) = try!(serialization::decode(bytes));
+    Ok(decode_body(data, &header))
 }
 
-pub fn decode_body(bytes: &[u8], header: &ObjectHeader) -> Result<Blob, GitError> {
-    Ok(Blob {
+pub fn decode_body(bytes: &[u8], header: &ObjectHeader) -> Blob {
+    Blob {
         meta: Meta {
             id: ObjectId::from_string("b744d5cddb5095249299d95ee531cbd990741140"),
             header: *header,
         },
         size: bytes.len(),
         contents: bytes.to_vec(),
-    })
+    }
 }
 
 pub fn find(id: &ObjectId, repository: &Repository) -> Result<Blob, GitError> {

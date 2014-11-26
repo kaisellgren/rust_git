@@ -2,11 +2,13 @@
 use std::io;
 use std::error::FromError;
 use std::error::Error;
+use std::str::MaybeOwned;
 
 #[deriving(Show)]
 pub enum GitError {
-    CorruptRepository(&'static str),
-    CorruptCommit(&'static str),
+    CorruptRepository(MaybeOwned<'static>),
+    CorruptCommit(MaybeOwned<'static>),
+    CorruptObject(MaybeOwned<'static>),
     NotFound,
     IoError(io::IoError),
 }
@@ -18,20 +20,22 @@ impl FromError<io::IoError> for GitError {
 }
 
 impl Error for GitError {
-    fn description(&self) -> &'static str {
+    fn description(&self) -> &str {
         match *self {
-            GitError::CorruptRepository(s) => "corrupt repository",
-            GitError::CorruptCommit(s) => "corrupt commit",
-            GitError::NotFound => "not found",
-            GitError::IoError(ref e) => "encountered an I/O error",
+            GitError::CorruptRepository(..) => "corrupt repository",
+            GitError::CorruptCommit(..)     => "corrupt commit",
+            GitError::CorruptObject(..)     => "corrupt object",
+            GitError::NotFound             => "not found",
+            GitError::IoError(..)       => "encountered an I/O error",
         }
     }
 
     fn detail(&self) -> Option<String> {
         match *self {
-            GitError::CorruptRepository(s) => Some(s.into_string()),
-            GitError::CorruptCommit(s) => Some(s.into_string()),
-            _ => None,
+            GitError::CorruptRepository(ref s) => Some(s.clone().into_string()),
+            GitError::CorruptCommit(ref s)     => Some(s.clone().into_string()),
+            GitError::CorruptObject(ref s)     => Some(s.clone().into_string()),
+            _                                  => None,
         }
     }
 
