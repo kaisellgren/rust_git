@@ -1,3 +1,5 @@
+#![allow(unused_imports)]
+
 use repository::Repository;
 use std::io::fs::rmdir_recursive;
 use reference;

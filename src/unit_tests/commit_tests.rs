@@ -1,3 +1,5 @@
+#![allow(unused_imports)]
+
 use std::io::File;
 use commit::Commit;
 use commit;
