@@ -1,7 +1,26 @@
 rust_git
 ========
 
-Git written from scratch in Rust
+Git written from scratch in Rust.
+
+## Implemented features
+
+* Object file encoding and decoding
+* The Git object model
+* Ref loading
+* Log
+
+## Unimplemented features
+
+* Pack index/file support
+* Staging
+* Commit
+* Rebase
+* Checkout
+* Merge
+* Synchronization (push, pull/fetch)
+* Stash
+* Config
 
 View API documentation here:
 
