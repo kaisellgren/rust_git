@@ -23,13 +23,14 @@ pub struct Reference {
 pub fn find(repository: &Repository) -> Result<ReferenceCollection, IoError> {
     let local_files = try!(readdir(&repository.path.join(LOCAL_BRANCH_PREFIX)));
 
-    let local_references: Vec<Reference> = local_files.iter().filter(|e| e.is_file()).map(|entry| {
-        Reference {
+    let local_references: Vec<Reference> = try!(local_files.iter().filter(|e| e.is_file()).map(|entry| {
+        let target_identifier = try!(File::open(entry).read_to_string());
+        Ok(Reference {
             canonical_name: entry.filename_str().unwrap().into_string(),
-            target_identifier: ObjectId::from_string(File::open(entry).read_to_string().unwrap().as_slice()), // TODO: TRIM!
+            target_identifier: ObjectId::from_string(target_identifier.as_slice()), // TODO: TRIM!
             remote_name: None
-        }
-    }).collect();
+        })
+    }).collect());
 
     let head_contents = try!(File::open(&repository.path.join("HEAD")).read_to_string());
     let head_name = head_contents.replace("ref: refs/heads/", "").as_slice().trim_right().into_string();

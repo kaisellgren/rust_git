@@ -10,6 +10,7 @@ use object_header;
 use object_id::ObjectId;
 use error::GitError;
 use error::GitError::NotFound;
+use error::GitError::CorruptObject;
 use flate::inflate_bytes_zlib;
 use repository::Repository;
 
@@ -20,8 +21,13 @@ pub fn find_object_by_id(repository: &Repository, id: &ObjectId) -> Result<Box<G
 
     if path.exists() {
         let mut file = File::open(&path);
-        let bytes = file.read_to_end().unwrap();
-        let data = inflate_bytes_zlib(bytes.as_slice()).unwrap();
+        let bytes = try!(file.read_to_end());
+        let data = match inflate_bytes_zlib(bytes.as_slice()) {
+            Some(d) => d,
+            None => return Err(CorruptObject(
+                format!("Could not inflate data at {}", path.display()).into_maybe_owned()
+            ))
+        };
 
         let header = try!(object_header::decode(data.as_slice()));
         let object_data = data.as_slice().slice_from(data.len() - header.length);
