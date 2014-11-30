@@ -30,6 +30,6 @@ pub fn from_text(text: &str) -> Result<ObjectType, GitError> {
         "blob"   => Ok(ObjectType::Blob),
         "tag"    => Ok(ObjectType::Tag),
         "note"   => Ok(ObjectType::Note),
-        _        => Err(CorruptObject(format!("Cannot convert `{}` to an ObjectType!", text).into_maybe_owned()))
+        _        => Err(CorruptObject(format!("Cannot convert `{}` to an ObjectType!", text).into_cow()))
     }
 }

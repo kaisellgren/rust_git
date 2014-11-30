@@ -25,7 +25,7 @@ pub fn find_object_by_id(repository: &Repository, id: &ObjectId) -> Result<Box<G
         let data = match inflate_bytes_zlib(bytes.as_slice()) {
             Some(d) => d,
             None => return Err(CorruptObject(
-                format!("Could not inflate data at {}", path.display()).into_maybe_owned()
+                format!("Could not inflate data at {}", path.display()).into_cow()
             ))
         };
 

@@ -29,7 +29,7 @@ impl Branch {
 pub fn tip(repository: &Repository, branch: &Branch) -> Result<Commit, GitError> {
     match try!(find_object_by_id(repository, &branch.tip_id)) {
         box GitCommit(c) => Ok(c),
-        _ => Err(CorruptRepository("Could not find the commit the branch points to".into_maybe_owned())),
+        _ => Err(CorruptRepository("Could not find the commit the branch points to".into_cow())),
     }
 }
 

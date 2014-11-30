@@ -66,7 +66,7 @@ pub fn decode_body(bytes: &[u8], header: &ObjectHeader) -> Result<Commit, GitErr
     let mut reader = Reader::from_data(bytes);
 
     if reader.take_string(5) != "tree " {
-        return Err(CorruptCommit("Expected 'tree '".into_maybe_owned()))
+        return Err(CorruptCommit("Expected 'tree '".into_cow()))
     }
 
     let tree_id = reader.take_string_based_object_id();
@@ -86,13 +86,13 @@ pub fn decode_body(bytes: &[u8], header: &ObjectHeader) -> Result<Commit, GitErr
     reader.back(6);
 
     if reader.take_string(7) != "author " {
-        return Err(CorruptCommit("Expected 'author '".into_maybe_owned()))
+        return Err(CorruptCommit("Expected 'author '".into_cow()))
     }
 
     let (author_name, author_email, author_date) = serialization::decode_user_info(&mut reader);
 
     if reader.take_string(10) != "committer " {
-        return Err(CorruptCommit("Expected 'committer '".into_maybe_owned()))
+        return Err(CorruptCommit("Expected 'committer '".into_cow()))
     }
 
     let (committer_name, committer_email, commit_date) = serialization::decode_user_info(&mut reader);

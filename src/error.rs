@@ -2,13 +2,13 @@
 use std::io;
 use std::error::FromError;
 use std::error::Error;
-use std::str::MaybeOwned;
+use std::borrow::Cow;
 
 #[deriving(Show)]
 pub enum GitError {
-    CorruptRepository(MaybeOwned<'static>),
-    CorruptCommit(MaybeOwned<'static>),
-    CorruptObject(MaybeOwned<'static>),
+    CorruptRepository(Cow<'static, String, str>),
+    CorruptCommit(Cow<'static, String, str>),
+    CorruptObject(Cow<'static, String, str>),
     NotFound,
     IoError(io::IoError),
 }
