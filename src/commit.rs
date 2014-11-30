@@ -89,13 +89,13 @@ pub fn decode_body(bytes: &[u8], header: &ObjectHeader) -> Result<Commit, GitErr
         return Err(CorruptCommit("Expected 'author '".into_cow()))
     }
 
-    let (author_name, author_email, author_date) = serialization::decode_user_info(&mut reader);
+    let (author_name, author_email, author_date) = try!(serialization::decode_user_info(&mut reader));
 
     if reader.take_string(10) != "committer " {
         return Err(CorruptCommit("Expected 'committer '".into_cow()))
     }
 
-    let (committer_name, committer_email, commit_date) = serialization::decode_user_info(&mut reader);
+    let (committer_name, committer_email, commit_date) = try!(serialization::decode_user_info(&mut reader));
 
     reader.skip(1);
 

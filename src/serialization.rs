@@ -5,6 +5,7 @@ use object_header;
 use reader::Reader;
 use has_meta::HasMeta;
 use error::GitError;
+use error::GitError::CorruptObject;
 
 pub fn encode(object: &HasMeta, body: &[u8]) -> Vec<u8> {
     let mut buff = Vec::new();
@@ -43,7 +44,7 @@ pub fn encode_commit_info(commit: &Commit) -> Vec<u8> {
     .into_bytes()
 }
 
-pub fn decode_user_info(reader: &mut Reader) -> (String, String, uint) {
+pub fn decode_user_info(reader: &mut Reader) -> Result<(String, String, uint), GitError> {
     let name = reader.take_string_while(|&c| c != 60).trim();
 
     reader.skip(1); // <
@@ -52,7 +53,10 @@ pub fn decode_user_info(reader: &mut Reader) -> (String, String, uint) {
 
     reader.skip(2); // One ´>´ and one space.
 
-    let timestamp: uint = FromStr::from_str(reader.take_string_while(|&c| c != 32)).unwrap();
+    let timestamp: uint = try!(
+        FromStr::from_str(reader.take_string_while(|&c| c != 32))
+            .ok_or(CorruptObject("invalid timestamp".into_cow()))
+    );
 
     reader.skip(1); // One space.
 
@@ -60,7 +64,7 @@ pub fn decode_user_info(reader: &mut Reader) -> (String, String, uint) {
 
     reader.skip(1); // LF.
 
-    (name.into_string(), email.into_string(), timestamp)
+    Ok((name.into_string(), email.into_string(), timestamp))
 }
 
 pub fn encode_date(date: uint) -> String {

@@ -5,6 +5,7 @@ use object_type;
 use reader::Reader;
 use std::str::FromStr;
 use error::GitError;
+use error::GitError::CorruptObject;
 
 #[deriving(PartialEq, Show, Clone)]
 pub struct ObjectHeader {
@@ -31,7 +32,10 @@ pub fn decode(bytes: &[u8]) -> Result<ObjectHeader, GitError> {
 
     reader.skip(1);
 
-    let length: uint = FromStr::from_str(reader.take_string_while(|c| *c != 0)).unwrap();
+    let length: uint = try!(
+        FromStr::from_str(reader.take_string_while(|c| *c != 0))
+            .ok_or(CorruptObject("invalid header length".into_cow()))
+    );
 
     Ok(ObjectHeader {
         typ: typ,
