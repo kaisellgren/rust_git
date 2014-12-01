@@ -65,33 +65,37 @@ pub fn decode(bytes: &[u8]) -> Result<Commit, GitError> {
 pub fn decode_body(bytes: &[u8], header: &ObjectHeader) -> Result<Commit, GitError> {
     let mut reader = Reader::from_data(bytes);
 
-    if reader.take_string(5) != "tree " {
+    if reader.take_string(5) != Some("tree ") {
         return Err(CorruptCommit("Expected 'tree '".into_cow()))
     }
 
-    let tree_id = reader.take_string_based_object_id();
+    let tree_id = try!(
+        reader.take_string_based_object_id().ok_or(CorruptCommit("Invalid tree id".into_cow()))
+    );
 
     reader.skip(1);
 
     let mut parent_ids = Vec::new();
 
-    while reader.take_string_while(|&c| c != 32) == "parent" {
+    while reader.take_string_while(|&c| c != 32) == Some("parent") {
         reader.skip(1);
 
-        parent_ids.push(reader.take_string_based_object_id());
+        parent_ids.push(try!(
+            reader.take_string_based_object_id().ok_or(CorruptCommit("Invalid parent".into_cow()))
+        ));
 
         reader.skip(1);
     }
 
     reader.back(6);
 
-    if reader.take_string(7) != "author " {
+    if reader.take_string(7) != Some("author ") {
         return Err(CorruptCommit("Expected 'author '".into_cow()))
     }
 
     let (author_name, author_email, author_date) = try!(serialization::decode_user_info(&mut reader));
 
-    if reader.take_string(10) != "committer " {
+    if reader.take_string(10) != Some("committer ") {
         return Err(CorruptCommit("Expected 'committer '".into_cow()))
     }
 
@@ -99,7 +103,9 @@ pub fn decode_body(bytes: &[u8], header: &ObjectHeader) -> Result<Commit, GitErr
 
     reader.skip(1);
 
-    let message = reader.get_rest_as_string();
+    let message = try!(
+        reader.get_rest_as_string().ok_or(CorruptCommit("Invalid commit message".into_cow()))
+    );
 
     Ok(Commit {
         meta: Meta {

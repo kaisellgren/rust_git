@@ -31,16 +31,16 @@ impl<'a> Reader<'a> {
         self.take(length)
     }
 
-    pub fn take_string_while(&mut self, predicate: |&u8| -> bool) -> &'a str {
-        str::from_utf8(self.take_while(predicate)).unwrap()
+    pub fn take_string_while(&mut self, predicate: |&u8| -> bool) -> Option<&'a str> {
+        str::from_utf8(self.take_while(predicate))
     }
 
-    pub fn take_string(&mut self, length: uint) -> &'a str {
-        str::from_utf8(self.take(length)).unwrap()
+    pub fn take_string(&mut self, length: uint) -> Option<&'a str> {
+        str::from_utf8(self.take(length))
     }
 
-    pub fn take_string_based_object_id(&mut self) -> ObjectId {
-        ObjectId::from_string(self.take_string(40))
+    pub fn take_string_based_object_id(&mut self) -> Option<ObjectId> {
+        self.take_string(40).map(ObjectId::from_string)
     }
 
     pub fn take_object_id(&mut self) -> ObjectId {
@@ -55,8 +55,8 @@ impl<'a> Reader<'a> {
         self.data.slice_from(self.position)
     }
 
-    pub fn get_rest_as_string(&self) -> &'a str {
-        str::from_utf8(self.get_rest()).unwrap()
+    pub fn get_rest_as_string(&self) -> Option<&'a str> {
+        str::from_utf8(self.get_rest())
     }
 
     pub fn skip(&mut self, length: uint) {

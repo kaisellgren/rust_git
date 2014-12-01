@@ -4,11 +4,13 @@ use std::error::FromError;
 use std::error::Error;
 use std::borrow::Cow;
 
+pub type StringCow = Cow<'static, String, str>;
+
 #[deriving(Show)]
 pub enum GitError {
-    CorruptRepository(Cow<'static, String, str>),
-    CorruptCommit(Cow<'static, String, str>),
-    CorruptObject(Cow<'static, String, str>),
+    CorruptRepository(StringCow),
+    CorruptCommit(StringCow),
+    CorruptObject(StringCow),
     NotFound,
     IoError(io::IoError),
 }

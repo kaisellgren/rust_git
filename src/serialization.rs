@@ -45,22 +45,28 @@ pub fn encode_commit_info(commit: &Commit) -> Vec<u8> {
 }
 
 pub fn decode_user_info(reader: &mut Reader) -> Result<(String, String, uint), GitError> {
-    let name = reader.take_string_while(|&c| c != 60).trim();
+    let name = try!(
+        reader.take_string_while(|&c| c != 60).ok_or(CorruptObject("Invalid name".into_cow()))
+    ).trim();
 
     reader.skip(1); // <
 
-    let email = reader.take_string_while(|&c| c != 62).trim();
+    let email = try!(
+        reader.take_string_while(|&c| c != 62).ok_or(CorruptObject("Invalid email".into_cow()))
+    ).trim();
 
     reader.skip(2); // One ´>´ and one space.
 
     let timestamp: uint = try!(
-        FromStr::from_str(reader.take_string_while(|&c| c != 32))
-            .ok_or(CorruptObject("invalid timestamp".into_cow()))
+        FromStr::from_str(reader.take_string_while(|&c| c != 32).unwrap_or(""))
+            .ok_or(CorruptObject("Invalid timestamp".into_cow()))
     );
 
     reader.skip(1); // One space.
 
-    let time_zone_offset = reader.take_string_while(|&c| c != 10);
+    let time_zone_offset = try!(
+        reader.take_string_while(|&c| c != 10).ok_or(CorruptObject("Invalid timezone".into_cow()))
+    );
 
     reader.skip(1); // LF.
 
