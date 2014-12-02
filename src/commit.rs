@@ -13,7 +13,6 @@ use commit_filter::CommitFilter;
 use object_database::find_object_by_id;
 use git_object::GitObject::GitCommit;
 use commit_sort_strategy::CommitSortStrategy::MostRecent;
-use extensions;
 use has_meta::HasMeta;
 
 #[deriving(PartialEq, Show, Clone)]
@@ -149,7 +148,7 @@ pub fn find(repository: &Repository, filter: CommitFilter) -> Result<Vec<Commit>
                     break;
                 }
 
-                let most_recent: Commit = extensions::max_by(commits.as_slice(), |c| c.commit_date).unwrap();
+                let most_recent: Commit = commits.iter().max_by(|c| c.commit_date).unwrap().clone();
 
                 buffer.push(most_recent.clone());
 

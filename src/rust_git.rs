@@ -47,7 +47,6 @@ pub mod blob;
 pub mod object_database;
 pub mod commit_sort_strategy;
 pub mod commit_filter;
-mod extensions;
 mod file_util;
 mod has_meta;
 mod reference_collection;
