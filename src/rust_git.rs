@@ -23,6 +23,7 @@
 #![allow(dead_code)]
 
 extern crate flate;
+extern crate serialize;
 
 pub mod commit;
 pub mod meta;
@@ -33,7 +34,6 @@ mod git_object;
 mod unit_tests;
 mod serialization;
 mod reader;
-mod conversion;
 pub mod error;
 pub mod file_status;
 pub mod repository;

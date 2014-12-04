@@ -45,7 +45,7 @@ fn path_to_reference(path: &Path) -> Result<Reference, GitError> {
     let target_identifier = try!(File::open(path).read_to_string());
     Ok(Reference {
         canonical_name: try!(path.filename_str().ok_or(NotFound)).into_string(),
-        target_identifier: ObjectId::from_string(target_identifier.as_slice().trim()),
+        target_identifier: try!(ObjectId::from_string(target_identifier.as_slice().trim())),
         remote_name: None
     })
 }

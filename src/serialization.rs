@@ -46,13 +46,13 @@ pub fn encode_commit_info(commit: &Commit) -> Vec<u8> {
 
 pub fn decode_user_info(reader: &mut Reader) -> Result<(String, String, uint), GitError> {
     let name = try!(
-        reader.take_string_while(|&c| c != 60).ok_or(CorruptObject("Invalid name".into_cow()))
+        reader.take_string_while(|&c| c != 60).or(Err(CorruptObject("Invalid name".into_cow())))
     ).trim();
 
     reader.skip(1); // <
 
     let email = try!(
-        reader.take_string_while(|&c| c != 62).ok_or(CorruptObject("Invalid email".into_cow()))
+        reader.take_string_while(|&c| c != 62).or(Err(CorruptObject("Invalid email".into_cow())))
     ).trim();
 
     reader.skip(2); // One ´>´ and one space.
@@ -65,7 +65,7 @@ pub fn decode_user_info(reader: &mut Reader) -> Result<(String, String, uint), G
     reader.skip(1); // One space.
 
     let time_zone_offset = try!(
-        reader.take_string_while(|&c| c != 10).ok_or(CorruptObject("Invalid timezone".into_cow()))
+        reader.take_string_while(|&c| c != 10).or(Err(CorruptObject("Invalid timezone".into_cow())))
     );
 
     reader.skip(1); // LF.

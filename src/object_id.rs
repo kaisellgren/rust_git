@@ -1,6 +1,8 @@
 //! Represents Git identifiers.
 
-use conversion;
+use serialize::hex::ToHex;
+use serialize::hex::FromHex;
+use error::GitError;
 
 pub static RAW_SIZE: uint = 20;
 pub static HEX_SIZE: uint = 40;
@@ -12,16 +14,18 @@ pub struct ObjectId {
 }
 
 impl ObjectId {
-    pub fn from_string(hash: &str) -> ObjectId {
-        ObjectId {
+    pub fn from_string(hash: &str) -> Result<ObjectId, GitError> {
+        let bytes = try!(FromHex::from_hex(hash));
+
+        Ok(ObjectId {
             hash: hash.to_string(),
-            bytes: conversion::hex_string_to_bytes(hash)
-        }
+            bytes: bytes
+        })
     }
 
     pub fn from_bytes(bytes: &[u8]) -> ObjectId {
         ObjectId {
-            hash: conversion::bytes_to_hex_string(bytes),
+            hash: bytes.to_hex(),
             bytes: bytes.to_vec()
         }
     }

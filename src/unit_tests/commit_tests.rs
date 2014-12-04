@@ -11,7 +11,7 @@ use meta::Meta;
 fn create_test_commit() -> Commit {
     Commit {
         meta: Meta {
-            id: ObjectId::from_string("b744d5cddb5095249299d95ee531cbd990741140"),
+            id: ObjectId::from_string("b744d5cddb5095249299d95ee531cbd990741140").unwrap(),
             header: ObjectHeader {
                 typ: ObjectType::Commit,
                 length: 271
@@ -24,10 +24,10 @@ fn create_test_commit() -> Commit {
         committer_email: "kaisellgren+foo@gmail.com".into_string(),
         commit_date: 1388624646,
         message: "foo bar baz qux".into_string(),
-        tree_id: ObjectId::from_string("b744d5cddb5095249299d95ee531cbd990741140"),
+        tree_id: ObjectId::from_string("b744d5cddb5095249299d95ee531cbd990741140").unwrap(),
         parent_ids: vec![
-            ObjectId::from_string("b744d5cddb5095249299d95ee531cbd990741141"),
-            ObjectId::from_string("b744d5cddb5095249299d95ee531cbd990741142")
+            ObjectId::from_string("b744d5cddb5095249299d95ee531cbd990741141").unwrap(),
+            ObjectId::from_string("b744d5cddb5095249299d95ee531cbd990741142").unwrap()
         ]
     }
 }
