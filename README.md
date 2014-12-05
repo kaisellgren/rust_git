@@ -21,6 +21,8 @@ Git written from scratch in Rust.
 * Synchronization (push, pull/fetch)
 * Stash
 * Config
+* Timezones
+* Notes
 
 View API documentation here:
 
